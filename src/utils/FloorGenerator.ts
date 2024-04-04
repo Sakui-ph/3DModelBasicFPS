@@ -42,7 +42,7 @@ export class FloorGenerator {
             this.heightSegments,
         );
 
-        const texture = this.textureLoader.load('./textures/placeholder.png');
+        const texture = this.textureLoader.load('textures/placeholder.png');
 
         console.log(texture);
 
