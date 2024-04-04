@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { PointerLockControls } from 'three/examples/jsm/Addons.js';
 import { FloorGenerator } from './utils/FloorGenerator';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { AmbientLight, DirectionalLight } from 'three';
 
 const width = window.innerWidth;
@@ -19,16 +18,6 @@ scene.background = new THREE.Color(0xa8def0);
 // Define the camera
 const camera = new THREE.PerspectiveCamera(70, width / height, 0.1, 1000);
 camera.position.y = 5;
-camera.position.z = 5;
-camera.position.x = 0;
-
-const orbitControls = new OrbitControls(camera, renderer.domElement);
-orbitControls.enableDamping = true;
-orbitControls.minDistance = 5;
-orbitControls.maxDistance = 15;
-orbitControls.enablePan = false;
-orbitControls.maxPolarAngle = Math.PI / 2 - 0.05;
-orbitControls.update();
 
 // Define the controls
 const controls = new PointerLockControls(camera, renderer.domElement);
@@ -56,7 +45,6 @@ light();
 floor.generate();
 
 function animate() {
-    orbitControls.update();
     onWindowResize();
     render();
     requestAnimationFrame(animate);

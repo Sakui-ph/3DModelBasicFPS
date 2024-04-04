@@ -42,16 +42,11 @@ export class FloorGenerator {
             this.heightSegments,
         );
 
-        const texture = this.textureLoader.load('textures/placeholder.png');
-
-        console.log(texture);
-
         let material = new MeshPhongMaterial({
-            map: texture,
+            map: this.texture,
         });
 
-        console.log(material);
-
+        if (material.map != null) this.fillWorld(material.map);
         const floor = new Mesh(geometry, material);
         floor.receiveShadow = true;
         floor.rotation.x = -Math.PI / 2;
@@ -59,8 +54,7 @@ export class FloorGenerator {
         this.scene.add(floor);
     }
 
-    private fillWorld() {
-        const map = this.texture;
+    private fillWorld(map: Texture) {
         map.wrapS = map.wrapT = RepeatWrapping;
         map.repeat.x = map.repeat.y = 10;
     }
