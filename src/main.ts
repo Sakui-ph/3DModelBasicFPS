@@ -3,6 +3,7 @@ import { FloorGenerator } from './utils/FloorGenerator';
 import { AmbientLight, DirectionalLight } from 'three';
 import { FPSControls } from './utils/FPSControls';
 import { Glock } from './utils/Glock';
+import { Crosshair } from './utils/Crosshair';
 
 const width = window.innerWidth;
 const height = window.innerHeight;
@@ -73,6 +74,12 @@ document.addEventListener(
     },
     false,
 );
+
+// add the crosshair
+var sprite = Crosshair();
+scene.add(sprite);
+camera.add(sprite);
+sprite.position.set(0, 0, -1);
 
 const floor = new FloorGenerator(scene, 80, 80, './textures/placeholder.png');
 light();
