@@ -1,10 +1,12 @@
 import * as THREE from 'three';
-import { PointerLockControls } from 'three/examples/jsm/Addons.js';
 import { FloorGenerator } from './utils/FloorGenerator';
 import { AmbientLight, DirectionalLight } from 'three';
+import { FPSControls } from './utils/FPSControls';
+import { Glock } from './utils/Glock';
 
 const width = window.innerWidth;
 const height = window.innerHeight;
+const clock = new THREE.Clock();
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -20,25 +22,35 @@ const camera = new THREE.PerspectiveCamera(70, width / height, 0.1, 1000);
 camera.position.y = 5;
 
 // Define the controls
-const controls = new PointerLockControls(camera, renderer.domElement);
+const fpsControls: FPSControls = new FPSControls(camera, renderer.domElement);
 
-const onKeyDown = function (event: KeyboardEvent) {
-    switch (event.code) {
-        case 'KeyW':
-            controls.moveForward(0.25);
-            break;
-        case 'KeyA':
-            controls.moveRight(-0.25);
-            break;
-        case 'KeyS':
-            controls.moveForward(-0.25);
-            break;
-        case 'KeyD':
-            controls.moveRight(0.25);
-            break;
-    }
-};
-document.addEventListener('keydown', onKeyDown, false);
+const keysPressed = {};
+document.addEventListener(
+    'keydown',
+    (event) => {
+        if (event.shiftKey && fpsControls) {
+            fpsControls.switchRunToggle();
+        } else {
+            (keysPressed as any)[event.key.toLowerCase()] = true;
+        }
+    },
+    false,
+);
+document.addEventListener(
+    'keyup',
+    (event) => {
+        (keysPressed as any)[event.key.toLowerCase()] = false;
+    },
+    false,
+);
+const mouseButtonsPressed = {};
+document.addEventListener(
+    'mousedown',
+    (event) => {
+        (mouseButtonsPressed as any)[event.button] = true;
+    },
+    false,
+);
 
 const floor = new FloorGenerator(scene, 80, 80, './textures/placeholder.png');
 light();
@@ -46,6 +58,8 @@ floor.generate();
 
 function animate() {
     onWindowResize();
+    let delta = clock.getDelta();
+    fpsControls.update(delta, keysPressed, mouseButtonsPressed);
     render();
     requestAnimationFrame(animate);
 }
