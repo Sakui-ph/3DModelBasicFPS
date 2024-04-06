@@ -22,7 +22,12 @@ const camera = new THREE.PerspectiveCamera(70, width / height, 0.1, 1000);
 camera.position.y = 5;
 
 // Define the controls
-const fpsControls: FPSControls = new FPSControls(camera, renderer.domElement);
+const glock = new Glock(scene, './models/gun.gltf', camera);
+const fpsControls: FPSControls = new FPSControls(
+    camera,
+    renderer.domElement,
+    glock,
+);
 
 const keysPressed = {};
 document.addEventListener(
@@ -66,9 +71,11 @@ floor.generate();
 function animate() {
     onWindowResize();
     let delta = clock.getDelta();
-    fpsControls.update(delta, keysPressed, mouseButtonsPressed);
-    render();
+
     requestAnimationFrame(animate);
+    fpsControls.update(delta, keysPressed, mouseButtonsPressed);
+
+    render();
 }
 
 function render() {
