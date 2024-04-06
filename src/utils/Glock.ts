@@ -8,7 +8,15 @@ export class Glock {
         this.modelLoader = new GLTFLoader();
 
         this.modelLoader.load(modelPath, (gltf) => {
-            scene.add(gltf.scene);
+            const model = gltf.scene;
+
+            model.traverse((object: any) => {
+                if (object.isMesh) {
+                    object.castShadow = true;
+                }
+            });
+
+            scene.add(model);
         });
     }
 }

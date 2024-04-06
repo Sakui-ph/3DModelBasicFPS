@@ -32,6 +32,9 @@ export class FPSControls {
         if (keysPressed['d']) {
             this.controls.moveRight(0.1);
         }
+        if (keysPressed['escape']) {
+            this.controls.unlock();
+        }
 
         if (mouseButtonsPressed[0] && !this.controls.isLocked) {
             this.controls.lock();

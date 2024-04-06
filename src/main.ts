@@ -51,6 +51,13 @@ document.addEventListener(
     },
     false,
 );
+document.addEventListener(
+    'mouseup',
+    (event) => {
+        (mouseButtonsPressed as any)[event.button] = false;
+    },
+    false,
+);
 
 const floor = new FloorGenerator(scene, 80, 80, './textures/placeholder.png');
 light();
