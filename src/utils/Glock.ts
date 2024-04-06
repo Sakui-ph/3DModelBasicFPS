@@ -18,7 +18,6 @@ export class Glock {
     constructor(scene: Scene, modelPath: string, camera: Camera) {
         this.modelLoader = new GLTFLoader();
         this.loadModel(modelPath, camera);
-        scene.add(this.model);
     }
 
     private loadModel(modelPath: string, camera: Camera) {
@@ -35,7 +34,6 @@ export class Glock {
             const gltfAnimations = gltf.animations;
             this.mixer = new AnimationMixer(model);
             this.animationsMap = new Map();
-            console.log(gltfAnimations);
             gltfAnimations
                 .filter((a) => a.name !== 'idle')
                 .forEach((animation) => {
@@ -46,13 +44,13 @@ export class Glock {
                 });
 
             model.scale.set(0.5, 0.5, 0.5);
-            model.rotateY(Math.PI);
             model.position.set(
                 camera.position.x,
-                camera.position.y - 1,
-                camera.position.z - 2,
+                camera.position.y - 6,
+                camera.position.z + 1,
             );
-            this.model.add(camera);
+            model.rotateY(-Math.PI);
+            this.model.add(model);
         });
     }
 

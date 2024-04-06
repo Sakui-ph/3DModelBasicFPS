@@ -1,4 +1,4 @@
-import { AnimationAction, Camera } from 'three';
+import { AnimationAction, Camera, Quaternion, Vector3 } from 'three';
 import { PointerLockControls } from 'three/examples/jsm/Addons.js';
 import { Glock } from './Glock';
 
@@ -8,6 +8,7 @@ export class FPSControls {
     private run: boolean = false;
     private glock: Glock;
     private currentAnimation: AnimationAction | null = null;
+    private cameraLookAt: Vector3;
 
     switchRunToggle() {
         this.run = !this.run;
@@ -16,13 +17,22 @@ export class FPSControls {
     constructor(camera: Camera, domElement: HTMLCanvasElement, glock: Glock) {
         this.controls = new PointerLockControls(camera, domElement);
         this.domElement = domElement;
+        this.cameraLookAt = new Vector3(0, 0, -1);
         this.glock = glock;
     }
 
     public update(delta: number, keysPressed: any, mouseButtonsPressed: any) {
+        let camera = this.controls.getObject();
+        let model = this.glock.model;
+        this.cameraLookAt = this.controls
+            .getObject()
+            .getWorldDirection(this.cameraLookAt);
+
         if (this.glock.mixer) {
             this.glock.mixer.update(delta);
         }
+
+        console.log(this.glock.model.position);
 
         if (this.run) {
             this.controls.moveForward(0.1);

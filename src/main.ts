@@ -18,16 +18,26 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xa8def0);
 
 // Define the camera
-const camera = new THREE.PerspectiveCamera(70, width / height, 0.1, 1000);
-camera.position.y = 5;
+const camera = new THREE.PerspectiveCamera(90, width / height, 0.1, 1000);
+camera.position.set(0, 5, -5);
+
+const axisHelper = new THREE.AxesHelper(5);
+scene.add(axisHelper);
 
 // Define the controls
 const glock = new Glock(scene, './models/gun.gltf', camera);
+
 const fpsControls: FPSControls = new FPSControls(
     camera,
     renderer.domElement,
     glock,
 );
+
+scene.add(camera);
+scene.add(glock.model);
+camera.add(glock.model);
+glock.model.position.set(2, 0, 1);
+console.log(glock.model.position);
 
 const keysPressed = {};
 document.addEventListener(
