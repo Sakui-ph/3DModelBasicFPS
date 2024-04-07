@@ -1,10 +1,13 @@
 import {
     AnimationAction,
+    AudioLoader,
+    AudioListener,
     Camera,
     Raycaster,
     Scene,
     Vector2,
     Vector3,
+    Audio,
 } from 'three';
 import { PointerLockControls } from 'three/examples/jsm/Addons.js';
 import { Glock } from './Glock';
@@ -18,6 +21,7 @@ export class FPSControls {
     private cameraLookAt: Vector3;
     private raycaster;
     private scene: Scene;
+    private audioListener: AudioListener;
 
     private ammo: number = 10;
     private totalAmmo: number = 10;
@@ -34,6 +38,7 @@ export class FPSControls {
         domElement: HTMLCanvasElement,
         glock: Glock,
         raycaster: Raycaster,
+        audioListener: THREE.AudioListener,
         scene: Scene,
     ) {
         this.raycaster = raycaster;
@@ -42,6 +47,7 @@ export class FPSControls {
         this.cameraLookAt = new Vector3(0, 0, -1);
         this.glock = glock;
         this.scene = scene;
+        this.audioListener = audioListener;
         this.controls.pointerSpeed = 0.4;
     }
 
@@ -138,6 +144,13 @@ export class FPSControls {
 
     private ShootRay() {
         const camera = this.controls.getObject();
+        const sound = new Audio(this.audioListener);
+        this.scene.add(sound);
+        new AudioLoader().load('./audio/glock.mp3', (buffer) => {
+            sound.setBuffer(buffer);
+            sound.setVolume(0.5);
+            sound.play();
+        });
         this.raycaster.setFromCamera(new Vector2(0, 0), camera);
 
         this.ammo--;

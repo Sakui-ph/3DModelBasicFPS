@@ -15,6 +15,7 @@ const height = window.innerHeight;
 const clock = new THREE.Clock();
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
+const audioListener = new THREE.AudioListener();
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.shadowMap.enabled = true;
@@ -26,6 +27,7 @@ scene.background = new THREE.Color(0xa8def0);
 // Define the camera
 const camera = new THREE.PerspectiveCamera(90, width / height, 0.1, 1000);
 camera.position.set(0, 5, -5);
+camera.add(audioListener);
 
 // Define the controls
 const glock = new Glock(scene, './models/gun2.gltf', camera);
@@ -36,6 +38,7 @@ const fpsControls: FPSControls = new FPSControls(
     renderer.domElement,
     glock,
     raycaster,
+    audioListener,
     scene,
 );
 
