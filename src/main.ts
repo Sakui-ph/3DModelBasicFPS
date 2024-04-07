@@ -26,12 +26,13 @@ const axisHelper = new THREE.AxesHelper(5);
 scene.add(axisHelper);
 
 // Define the controls
-const glock = new Glock(scene, './models/gun.gltf', camera);
+const glock = new Glock(scene, './models/gun2.gltf', camera);
 
 const fpsControls: FPSControls = new FPSControls(
     camera,
     renderer.domElement,
     glock,
+    scene,
 );
 
 scene.add(camera);
@@ -84,6 +85,8 @@ sprite.position.set(0, 0, -1);
 const floor = new FloorGenerator(scene, 80, 80, './textures/placeholder.png');
 light();
 floor.generate();
+
+// Create Raycaster
 
 function animate() {
     onWindowResize();
