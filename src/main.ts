@@ -27,9 +27,6 @@ scene.background = new THREE.Color(0xa8def0);
 const camera = new THREE.PerspectiveCamera(90, width / height, 0.1, 1000);
 camera.position.set(0, 5, -5);
 
-const axisHelper = new THREE.AxesHelper(5);
-scene.add(axisHelper);
-
 // Define the controls
 const glock = new Glock(scene, './models/gun2.gltf', camera);
 const raycaster = new THREE.Raycaster();
@@ -108,8 +105,10 @@ function animate() {
 
     requestAnimationFrame(animate);
     targetSpawner.reachTargetCount();
-    targetSpawner.checkRaycaster(raycaster);
+    targetSpawner.reachMovingTargetCount();
+    targetSpawner.updateMovingTargets();
     fpsControls.update(delta, keysPressed, mouseButtonsPressed);
+    targetSpawner.checkRaycaster(raycaster);
 
     render();
 }

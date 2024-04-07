@@ -70,6 +70,7 @@ export class FPSControls {
         if (keysPressed['d']) {
             this.controls.moveRight(0.1);
         }
+
         if (keysPressed['escape']) {
             this.controls.unlock();
         }
@@ -106,12 +107,11 @@ export class FPSControls {
         if (mouseButtonsPressed[0] && !this.controls.isLocked) {
             mouseButtonsPressed[0] = false;
             this.controls.lock();
-        } else if (mouseButtonsPressed[0]) {
-            if (
-                this.ammo <= 0 &&
-                !(this.currentAnimation?.getClip().name === 'Reload')
-            ) {
-                this.Reload();
+        } else if (
+            mouseButtonsPressed[0] &&
+            this.currentAnimation?.getClip().name !== 'Reload'
+        ) {
+            if (this.ammo <= 0) {
                 return;
             }
             mouseButtonsPressed[0] = false;
