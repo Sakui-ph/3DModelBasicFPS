@@ -17,8 +17,10 @@ export class FPSControls {
     private glock: Glock;
     private currentAnimation: AnimationAction | null = null;
     private cameraLookAt: Vector3;
-    private raycaster = new Raycaster();
+    private raycaster;
     private scene: Scene;
+
+    private ammo: number = 10;
 
     switchRunToggle() {
         this.run = !this.run;
@@ -28,13 +30,16 @@ export class FPSControls {
         camera: Camera,
         domElement: HTMLCanvasElement,
         glock: Glock,
+        raycaster: Raycaster,
         scene: Scene,
     ) {
+        this.raycaster = raycaster;
         this.controls = new PointerLockControls(camera, domElement);
         this.domElement = domElement;
         this.cameraLookAt = new Vector3(0, 0, -1);
         this.glock = glock;
         this.scene = scene;
+        this.controls.pointerSpeed = 0.32;
     }
 
     public update(delta: number, keysPressed: any, mouseButtonsPressed: any) {
@@ -66,7 +71,6 @@ export class FPSControls {
             this.controls.unlock();
         }
 
-        console.log(keysPressed['r'], !this.currentAnimation);
         if (keysPressed['r'] && !this.currentAnimation) {
             this.currentAnimation = this.glock.playAnimation('Reload', false);
         }
@@ -104,13 +108,11 @@ export class FPSControls {
     private ShootRay() {
         const camera = this.controls.getObject();
         this.raycaster.setFromCamera(new Vector2(0, 0), camera);
-        this.scene.add(
-            new ArrowHelper(
-                this.raycaster.ray.direction,
-                this.raycaster.ray.origin,
-                300,
-                0xff0000,
-            ),
+        const intersects = this.raycaster.intersectObjects(
+            this.scene.children,
+            false,
         );
+
+        if (intersects.length === 0) return;
     }
 }

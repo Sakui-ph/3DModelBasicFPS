@@ -4,6 +4,11 @@ import { AmbientLight, DirectionalLight } from 'three';
 import { FPSControls } from './utils/FPSControls';
 import { Glock } from './utils/Glock';
 import { Crosshair } from './utils/Crosshair';
+import { TargetSpawner } from './utils/TargetSpawner';
+
+const FLOOR_WIDTH = 80;
+const FLOOR_HEIGHT = 80;
+const ARENA_HEIGHT = 1;
 
 const width = window.innerWidth;
 const height = window.innerHeight;
@@ -27,11 +32,13 @@ scene.add(axisHelper);
 
 // Define the controls
 const glock = new Glock(scene, './models/gun2.gltf', camera);
+const raycaster = new THREE.Raycaster();
 
 const fpsControls: FPSControls = new FPSControls(
     camera,
     renderer.domElement,
     glock,
+    raycaster,
     scene,
 );
 
@@ -82,17 +89,31 @@ scene.add(sprite);
 camera.add(sprite);
 sprite.position.set(0, 0, -1);
 
-const floor = new FloorGenerator(scene, 80, 80, './textures/placeholder.png');
+const floor = new FloorGenerator(
+    scene,
+    FLOOR_WIDTH,
+    FLOOR_HEIGHT,
+    './textures/placeholder.png',
+);
 light();
 floor.generate();
 
-// Create Raycaster
+// Create Target thing
+const targetSpawner = new TargetSpawner(
+    scene,
+    10,
+    FLOOR_HEIGHT / 2,
+    ARENA_HEIGHT / 2,
+    FLOOR_WIDTH,
+);
 
 function animate() {
     onWindowResize();
     let delta = clock.getDelta();
 
     requestAnimationFrame(animate);
+    targetSpawner.reachTargetCount();
+    targetSpawner.checkRaycaster(raycaster);
     fpsControls.update(delta, keysPressed, mouseButtonsPressed);
 
     render();
