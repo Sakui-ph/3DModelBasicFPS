@@ -4,3 +4,11 @@ body {
 canvas {
     display: block;
 }
+
+#ammoLabel {
+    position: absolute;
+    bottom: 0;
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 100px;
+}

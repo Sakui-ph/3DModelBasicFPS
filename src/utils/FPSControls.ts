@@ -1,6 +1,5 @@
 import {
     AnimationAction,
-    ArrowHelper,
     Camera,
     Raycaster,
     Scene,
@@ -21,6 +20,10 @@ export class FPSControls {
     private scene: Scene;
 
     private ammo: number = 10;
+    private totalAmmo: number = 10;
+
+    private ammoDocument: HTMLElement | null =
+        document.getElementById('ammoLabel');
 
     switchRunToggle() {
         this.run = !this.run;
@@ -39,7 +42,7 @@ export class FPSControls {
         this.cameraLookAt = new Vector3(0, 0, -1);
         this.glock = glock;
         this.scene = scene;
-        this.controls.pointerSpeed = 0.32;
+        this.controls.pointerSpeed = 0.4;
     }
 
     public update(delta: number, keysPressed: any, mouseButtonsPressed: any) {
@@ -72,13 +75,45 @@ export class FPSControls {
         }
 
         if (keysPressed['r'] && !this.currentAnimation) {
-            this.currentAnimation = this.glock.playAnimation('Reload', false);
+            this.Reload();
         }
 
+        this.glock.CheckAnimationEnd();
+        if (this.currentAnimation?.getClip().name === 'Reload') {
+            if (!this.glock.animating) {
+                this.FinishReload();
+            }
+        }
+
+        this.HandleShootingAnimation(mouseButtonsPressed);
+
+        if (!this.currentAnimation?.isRunning()) {
+            this.currentAnimation = null;
+        }
+
+        this.updateAmmoDisplay();
+    }
+
+    private Reload() {
+        this.currentAnimation = this.glock.playAnimation('Reload', false);
+    }
+
+    private FinishReload() {
+        this.currentAnimation = null;
+        this.RefillAmmo();
+    }
+    private HandleShootingAnimation(mouseButtonsPressed: any) {
         if (mouseButtonsPressed[0] && !this.controls.isLocked) {
             mouseButtonsPressed[0] = false;
             this.controls.lock();
         } else if (mouseButtonsPressed[0]) {
+            if (
+                this.ammo <= 0 &&
+                !(this.currentAnimation?.getClip().name === 'Reload')
+            ) {
+                this.Reload();
+                return;
+            }
             mouseButtonsPressed[0] = false;
             if (!this.currentAnimation) {
                 this.ShootRay();
@@ -89,7 +124,7 @@ export class FPSControls {
             }
 
             if (this.currentAnimation?.getClip().name === 'Shoot') {
-                if (this.currentAnimation.time > 0.15) {
+                if (this.currentAnimation.time > 0.1) {
                     this.ShootRay();
                     this.currentAnimation = this.glock.playAnimation(
                         'Shoot',
@@ -99,20 +134,22 @@ export class FPSControls {
                 }
             }
         }
-
-        if (!this.currentAnimation?.isRunning()) {
-            this.currentAnimation = null;
-        }
     }
 
     private ShootRay() {
         const camera = this.controls.getObject();
         this.raycaster.setFromCamera(new Vector2(0, 0), camera);
-        const intersects = this.raycaster.intersectObjects(
-            this.scene.children,
-            false,
-        );
 
-        if (intersects.length === 0) return;
+        this.ammo--;
+    }
+
+    private RefillAmmo() {
+        this.ammo = this.totalAmmo;
+    }
+
+    private updateAmmoDisplay() {
+        if (this.ammoDocument) {
+            this.ammoDocument.innerHTML = this.ammo.toString();
+        }
     }
 }

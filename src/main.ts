@@ -46,17 +46,12 @@ scene.add(camera);
 scene.add(glock.model);
 camera.add(glock.model);
 glock.model.position.set(2, 0, 1);
-console.log(glock.model.position);
 
 const keysPressed = {};
 document.addEventListener(
     'keydown',
     (event) => {
-        if (event.shiftKey && fpsControls) {
-            fpsControls.switchRunToggle();
-        } else {
-            (keysPressed as any)[event.key.toLowerCase()] = true;
-        }
+        (keysPressed as any)[event.key.toLowerCase()] = true;
     },
     false,
 );

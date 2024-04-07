@@ -7,14 +7,17 @@ import {
     AnimationAction,
     LoopOnce,
     LoopRepeat,
+    TextureLoader,
 } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/Addons.js';
 
 export class Glock {
     private modelLoader: GLTFLoader;
+    animating: boolean = false;
     model: Group = new Group();
     animationsMap: Map<string, AnimationAction> = new Map();
     mixer: AnimationMixer | null = null;
+
     constructor(scene: Scene, modelPath: string, camera: Camera) {
         this.modelLoader = new GLTFLoader();
         this.loadModel(modelPath, camera);
@@ -61,6 +64,7 @@ export class Glock {
     ): AnimationAction {
         const animation = this.animationsMap.get(animationName);
         if (animation) {
+            this.animating = true;
             animation.setLoop(loop ? LoopRepeat : LoopOnce, 1);
             animation.startAt(startAt);
             animation.play();
@@ -68,5 +72,16 @@ export class Glock {
             return animation;
         }
         throw new Error('Animation not found');
+    }
+
+    public CheckAnimationEnd() {
+        if (this.mixer) {
+            this.mixer.addEventListener('finished', (event) => {
+                const action = event.action;
+                action.stop();
+                this.animating = false;
+                this.mixer!.removeEventListener('finished', () => {});
+            });
+        }
     }
 }
